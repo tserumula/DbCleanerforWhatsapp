@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="50dp">
+
+    <PreferenceCategory
+        android:title="Main">
+
+        <ListPreference
+            android:defaultValue="off"
+            android:dialogTitle="@string/pref_auto_clean"
+            android:entries="@array/settings_auto_entries"
+            android:entryValues="@array/settings_auto_values"
+            app:icon="@android:drawable/ic_lock_idle_alarm"
+            android:key="auto_clean_preference"
+            android:summary="@string/pref_auto_clean_summary"
+            android:title="@string/pref_auto_clean" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="Feedback">
+
+        <Preference
+            android:title="About the author"
+            app:icon="@android:drawable/ic_menu_info_details">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetClass="com.tserumula.dbcleanerforwhatsapp.WebpageActivity"
+                android:targetPackage="com.tserumula.dbcleanerforwhatsapp">
+                <extra
+                    android:name="source"
+                    android:value="about" />
+            </intent>
+
+        </Preference>
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
