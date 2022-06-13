@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_brush_background.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/drawable/ic_brush_foreground.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/drawable/ic_refresh_vector.xml" value="0.27037037037037037" />
         <entry key="app/src/main/res/drawable/ic_settings_vector.xml" value="0.27037037037037037" />
         <entry key="app/src/main/res/drawable/ic_vector_refresh.xml" value="0.27037037037037037" />
         <entry key="app/src/main/res/drawable/ic_vector_settings.xml" value="0.27037037037037037" />
+        <entry key="app/src/main/res/drawable/icon_background.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.18704710144927536" />
         <entry key="app/src/main/res/layout/activity_webpage.xml" value="0.18070652173913043" />

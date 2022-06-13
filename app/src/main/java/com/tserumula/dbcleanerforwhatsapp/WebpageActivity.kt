@@ -32,7 +32,7 @@ class WebpageActivity : AppCompatActivity() {
         val source = intent.getStringExtra("source")
 
         if( source == "about" ){
-            title = "About the Author"
+            title = "About"
         }
 
         val filename  = when( source ){

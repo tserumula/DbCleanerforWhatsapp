@@ -92,6 +92,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setSchedule() {
+        /*
+        * Starts background service using alarm-manager
+        * The broadcast is received by ScheduleReceiver.kt which activates ScheduleService.kt
+        * */
         val calendar: Calendar = Calendar.getInstance()
 
         calendar.set(Calendar.HOUR_OF_DAY, 3) // 3AM
@@ -118,13 +122,13 @@ class MainActivity : AppCompatActivity() {
 
         //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, 10000, pendingIntent)
         alarmManager.setRepeating(
-            AlarmManager.RTC,
+            AlarmManager.RTC_WAKEUP,
             timeInMillis,
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
         //alarmManager.set( AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-        //Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Auto-clean up activated", Toast.LENGTH_SHORT).show()
     }
 
     private fun refreshViews(){
@@ -254,9 +258,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_exit -> {
-                setSchedule()
+                this.finishAffinity() //close app
                 true
             }
+
             else -> {
                 super.onOptionsItemSelected(item)
             }
@@ -333,7 +338,7 @@ class MainActivity : AppCompatActivity() {
             alert.setPositiveButton("YES") { _, _ ->
                 for (i in 0 until dataPaths.size){
                     val file = File(dataPaths[i])
-                    if( file.exists() ){
+                    if( file.canWrite() ){
                         file.delete()
                     }
                 }
@@ -379,7 +384,7 @@ class MainActivity : AppCompatActivity() {
             alert.setPositiveButton("YES") { _, _ ->
                 for (i in 0 until dataPathsWB.size){
                     val file = File(dataPathsWB[i])
-                    if( file.exists() ){
+                    if( file.canWrite() ){
                         file.delete()
                     }
                 }

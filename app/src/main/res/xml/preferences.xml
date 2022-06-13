@@ -23,7 +23,7 @@
         android:title="Feedback">
 
         <Preference
-            android:title="About the author"
+            android:title="About"
             app:icon="@android:drawable/ic_menu_info_details">
             <intent
                 android:action="android.intent.action.VIEW"
