@@ -101,10 +101,11 @@ class MainActivity : AppCompatActivity() {
         calendar.set(Calendar.HOUR_OF_DAY, 3) // 3AM
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
-        calendar.add(Calendar.DAY_OF_YEAR, 1) //To avoid firing the alarm immediately
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
 
         //calendar.timeInMillis = System.currentTimeMillis()
-        //calendar.add(Calendar.SECOND, 3)
+        //calendar.add(Calendar.SECOND, 20)
+
         val timeInMillis = calendar.timeInMillis
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -128,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             pendingIntent
         )
         //alarmManager.set( AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-        Toast.makeText(this, "Auto-clean up activated", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Auto-clean activated", Toast.LENGTH_SHORT).show()
     }
 
     private fun refreshViews(){
@@ -142,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 val whatsAppFolder = root.absolutePath + "/WhatsApp/Databases"
                 if ( File(whatsAppFolder).isDirectory) {
                     val files = File(whatsAppFolder).listFiles()
-                    if( files != null && files.size > 1 && files.size - 1 > dataList.size ) {
+                    if( files != null && files.size > 1 && files.size - 1 != dataList.size ) {
                         for ( file in files ) {
                             val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
                             if( !file.name.contains(MAIN_DBFILE_NAME) ) {
@@ -162,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 val whatsAppBusinessFolder = root.absolutePath + "/WhatsApp Business/Databases"
                 if ( File(whatsAppBusinessFolder).isDirectory) {
                     val filesWB = File(whatsAppBusinessFolder).listFiles()
-                    if( filesWB != null && filesWB.size > 1 && filesWB.size - 1 > dataListWB.size ) {
+                    if( filesWB != null && filesWB.size > 1 && filesWB.size - 1 != dataListWB.size ) {
                         for ( file in filesWB ) {
                             val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
                             if( !file.name.contains(MAIN_DBFILE_NAME) ) {

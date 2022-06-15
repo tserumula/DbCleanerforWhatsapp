@@ -14,6 +14,7 @@ import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class ScheduleService : Service() {
 
     private fun clearFiles() : String {
@@ -84,10 +85,14 @@ class ScheduleService : Service() {
 
     override fun onDestroy() {
         Log.d("Alarm Service", "Service on destroy")
+
+        SleepLock.instance.getMyWakeLock()?.release()
+
         super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
         Log.d("Alarm Service", "Service running")
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val index = when( prefs.getString("auto_clean_preference", "off")){
@@ -110,6 +115,7 @@ class ScheduleService : Service() {
             //Toast.makeText(this, "Service.onStart()", Toast.LENGTH_LONG).show()
             logEvent( log )
         }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
