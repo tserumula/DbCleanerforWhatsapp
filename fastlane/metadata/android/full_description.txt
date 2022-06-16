@@ -1,0 +1,7 @@
+Android App to help remove Whatsapp database files from external storage.
+
+The backup files kept by Whatsapp can sometimes end up taking too much storage space on a phone and this app is meant to help with this problem by removing the backup files that are redundant/ not needed. The user can clear the files manually or schedule the app to automatically remove the redundant files daily/weekly.
+
+- Currently the app only scans for backup files in 'WhatsApp' and 'WhatsApp Business' folders.
+- The main backup file with the name 'msgstore.db.cryptXX' is not deleted and is always kept so that the user can still recover their data if they uninstall WhatsApp at some point.
+- Latest version is targetted for devices running Android 5 (lollypop) to Android 11 (Red Velvet Cake).
