@@ -19,4 +19,3 @@
 		- Settings activity with "Automatic cleanup" option and "About" page only.
 		- Avoids removing/deleting any file with filename pattern [msgstore.db.crypt"]
 
-
