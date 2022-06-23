@@ -34,14 +34,11 @@
         <receiver
             android:name=".ScheduleReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <service
             android:name=".ScheduleService"
-            android:label="Schedule service"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" >
-        </service>
+            android:label="Schedule service"/>
 
     </application>
 
