@@ -7,7 +7,7 @@
 
 	Added :
 
-		- [fastlane/metadata/android] folder with app description and screenshots
+		- [fastlane/metadata/android] folder with app description and screenshots.
 
 
 * 2022-06-15
@@ -18,4 +18,6 @@
 		- AutoClean up service using Alarm-Manager and a wakeLock activated at 3:AM everyday/ once per week depending on settings.
 		- Settings activity with "Automatic cleanup" option and "About" page only.
 		- Avoids removing/deleting any file with filename pattern [msgstore.db.crypt"]
+
+
 
