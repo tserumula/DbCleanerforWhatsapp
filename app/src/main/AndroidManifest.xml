@@ -38,7 +38,8 @@
 
         <service
             android:name=".ScheduleService"
-            android:label="Schedule service"/>
+            android:label="Schedule service"
+            android:exported="false"/>
 
     </application>
 

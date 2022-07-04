@@ -28,12 +28,12 @@ class ScheduleService : Service() {
                 val whatsAppFolder = root.absolutePath + "/WhatsApp/Databases"
                 if (File(whatsAppFolder).isDirectory) {
                     val files = File(whatsAppFolder).listFiles()
-                    if (files != null && files.size > 1) {
+                    if ( files != null && files.size > 1) {
                         for (file in files) {
                             if ( !file.name.contains(MAIN_DBFILE_NAME) && file.canWrite() ) {
                                 totalSize += file.length()
                                 totalCleared += 1
-                                //file.delete()
+                                file.delete()
                             }
                         }
                         if( totalSize > 0 ) {
