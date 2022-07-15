@@ -1,0 +1,20 @@
+* 2022-06-22
+
+	Added :
+		- [Gitlab] : Request for Packaging (RFP) opened by (@Licaon_Kter)
+
+* 2022-06-16
+
+	Added :
+		- [fastlane/metadata/android] folder with app description and screenshots.
+
+* 2022-06-15
+
+	Added :
+		- Material Components UI
+		- Scanning of "WhatsApp" and "WhatsApp Business" folders only.
+		- AutoClean up service using Alarm-Manager and a wakeLock activated at 3:AM everyday/ once per week depending on settings.
+		- Settings activity with "Automatic cleanup" option and "About" page only.
+		- Avoids removing/deleting any file with filename pattern [msgstore.db.crypt"]
+
+
