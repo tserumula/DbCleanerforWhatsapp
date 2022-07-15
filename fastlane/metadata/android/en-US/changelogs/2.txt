@@ -1,12 +1,9 @@
 * 2022-07-04
 
 	Modified : 
-		- [app/src/main/java/...ScheduleService.kt] to allow the service to auto clean files if enabled. fim
-	Added :
-		- [fastlane/metadata/android/changelogs/2.txt]
-		- New stable release: v1.0
+		- Schedule-Service to allow the app to auto clean files if enabled.
 
-	Notes : 
+	Note : 
 	- On some devices such as Xiaomi phones the Battery Saver prevents the app from scheduling tasks in the background while the device is idle/sleeping. The user has to whitelist the app for the auto-clean to work.
 
 	- The app saves a log each time it auto cleans the backup files. 
