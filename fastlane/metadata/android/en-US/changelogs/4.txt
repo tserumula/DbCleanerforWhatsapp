@@ -1,0 +1,6 @@
+* 2022-07-04
+
+	Modified : 
+		- Update WhatsApp folder paths on devices running Android 11
+
+
