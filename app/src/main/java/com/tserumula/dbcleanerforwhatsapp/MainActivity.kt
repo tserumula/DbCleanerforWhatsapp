@@ -140,7 +140,12 @@ class MainActivity : AppCompatActivity() {
         if( storage != null ){
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
             if( root != null ) {
-                val whatsAppFolder = root.absolutePath + "/WhatsApp/Databases"
+                //Bug fix for Android 11
+                val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+                    root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
+                }else{
+                    root.absolutePath + "/WhatsApp/Databases"
+                }
                 if ( File(whatsAppFolder).isDirectory) {
                     val files = File(whatsAppFolder).listFiles()
                     if( files != null && files.size > 1 && files.size - 1 != dataList.size ) {
@@ -160,7 +165,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // Repeat for Whatsapp Business folder
-                val whatsAppBusinessFolder = root.absolutePath + "/WhatsApp Business/Databases"
+                val whatsAppBusinessFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+                    root.absolutePath + "/Android/media/com.whatsapp.w4b/WhatsApp Business/Databases"
+                }else{
+                    root.absolutePath + "/WhatsApp Business/Databases"
+                }
                 if ( File(whatsAppBusinessFolder).isDirectory) {
                     val filesWB = File(whatsAppBusinessFolder).listFiles()
                     if( filesWB != null && filesWB.size > 1 && filesWB.size - 1 != dataListWB.size ) {

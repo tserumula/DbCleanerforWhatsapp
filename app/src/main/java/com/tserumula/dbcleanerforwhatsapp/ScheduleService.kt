@@ -2,6 +2,7 @@ package com.tserumula.dbcleanerforwhatsapp
 
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.preference.PreferenceManager
@@ -25,7 +26,11 @@ class ScheduleService : Service() {
         if ( storage != null) {
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
             if (root != null) {
-                val whatsAppFolder = root.absolutePath + "/WhatsApp/Databases"
+                val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+                    root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
+                }else{
+                    root.absolutePath + "/WhatsApp/Databases"
+                }
                 if (File(whatsAppFolder).isDirectory) {
                     val files = File(whatsAppFolder).listFiles()
                     if ( files != null && files.size > 1) {
