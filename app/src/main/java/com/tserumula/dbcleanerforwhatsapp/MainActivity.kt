@@ -7,9 +7,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -34,17 +37,44 @@ class MainActivity : AppCompatActivity() {
 
     private var settingAutoClean : String = "off"
 
-    private fun checkStoragePermission( pName : String): Boolean{
-        val permission = ContextCompat.checkSelfPermission( this.applicationContext, pName)
-        return ( permission == PackageManager.PERMISSION_GRANTED )
+    private fun checkStoragePermission(): Boolean{
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+            return Environment.isExternalStorageManager()
+        }else{
+            val pA = ContextCompat.checkSelfPermission( applicationContext, permissions[0])
+            val pB = ContextCompat.checkSelfPermission( applicationContext, permissions[1])
+            return ( pA == PackageManager.PERMISSION_GRANTED && pB == PackageManager.PERMISSION_GRANTED )
+        }
     }
 
-    private fun requestPermission( array : Array<String>, storageCode : Int) {
+    private fun requestPermission() {
 
-        ActivityCompat.requestPermissions( this,
-            array,
-            storageCode
-        )
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+            //Android 11, 12,..
+            try{
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.addCategory("android.intent.category.DEFAULT")
+                intent.data = Uri.parse(String.format("package:%s", applicationContext.packageName))
+                startActivityForResult(intent, STORAGE_PERMISSION_CODE)
+            }catch(e : Exception){
+                e.printStackTrace()
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                startActivityForResult(intent, STORAGE_PERMISSION_CODE)
+            }
+        }else{
+            ActivityCompat.requestPermissions( this,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ),
+                STORAGE_PERMISSION_CODE
+            )
+        }
     }
 
     private fun permissionDenied(){
@@ -53,9 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         layout.visibility = View.INVISIBLE
         textview.visibility = View.VISIBLE
-
     }
-
 
     private fun isScheduleRunning(): Boolean{
         val intent = Intent(this, ScheduleReceiver::class.java)
@@ -133,34 +161,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshViews(){
-        val textNDView = findViewById<TextView>(R.id.not_detected_a)
-        val textNDViewB = findViewById<TextView>(R.id.not_detected_b)
+        val textViewA = findViewById<TextView>(R.id.detected_view_a)
+        val textViewB = findViewById<TextView>(R.id.detected_view_b)
+
+        val textViewClearA = findViewById<TextView>(R.id.nothing_clear_a)
+        val textViewClearB = findViewById<TextView>(R.id.nothing_clear_b)
+
+        dataPaths.clear()
+        dataList.clear()
 
         val storage = this.getExternalFilesDir("/")
         if( storage != null ){
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
             if( root != null ) {
-                //Bug fix for Android 11
                 val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
                     root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
                 }else{
                     root.absolutePath + "/WhatsApp/Databases"
                 }
                 if ( File(whatsAppFolder).isDirectory) {
+                    textViewA.text = resources.getString(R.string.app_detected)
+
                     val files = File(whatsAppFolder).listFiles()
-                    if( files != null && files.size > 1 && files.size - 1 != dataList.size ) {
+                    if( files != null && files.size > 1 ) {
                         for ( file in files ) {
                             val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
                             if( !file.name.contains(MAIN_DBFILE_NAME) ) {
+                                //Add file paths to memory so we don't have to scan again later
+                                    // (unless during refresh)
                                 dataPaths.add(file.path)
                                 dataList.add(file.name + "\n" + size + " MB")
                             }
                         }
                         listAdapter.notifyDataSetChanged()
-                        textNDView.visibility = View.INVISIBLE
-                    }else{
-                        //Nothing to clear
-                        textNDView.text = resources.getString(R.string.clear_nothing)
                     }
                 }
 
@@ -171,8 +204,10 @@ class MainActivity : AppCompatActivity() {
                     root.absolutePath + "/WhatsApp Business/Databases"
                 }
                 if ( File(whatsAppBusinessFolder).isDirectory) {
+                    textViewB.text = resources.getString(R.string.app_detected)
+
                     val filesWB = File(whatsAppBusinessFolder).listFiles()
-                    if( filesWB != null && filesWB.size > 1 && filesWB.size - 1 != dataListWB.size ) {
+                    if( filesWB != null && filesWB.size > 1 ) {
                         for ( file in filesWB ) {
                             val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
                             if( !file.name.contains(MAIN_DBFILE_NAME) ) {
@@ -181,30 +216,34 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         listAdapterWB.notifyDataSetChanged()
-                        textNDViewB.visibility = View.INVISIBLE
-                    }else{
-                        textNDViewB.text = resources.getString(R.string.clear_nothing)
                     }
                 }
             }
         }
 
         if( dataList.size > 0 ){
+            //There are files we can clear. Show clear button on screen
+            textViewClearA.visibility = View.GONE
             findViewById<Button>(R.id.clear_whatsapp_button).visibility = View.VISIBLE
+
         }else{
-            textNDView.visibility = View.VISIBLE
+            //Nothing to clear
+            textViewClearA.visibility = View.VISIBLE
             findViewById<Button>(R.id.clear_whatsapp_button).visibility = View.INVISIBLE
         }
 
         if( dataListWB.size > 0 ){
+            textViewClearB.visibility = View.GONE
             findViewById<Button>(R.id.clear_business_button).visibility = View.VISIBLE
         }else{
-            textNDViewB.visibility = View.VISIBLE
+            //Nothing to clear
+            textViewClearB.visibility = View.VISIBLE
             findViewById<Button>(R.id.clear_business_button).visibility = View.INVISIBLE
         }
     }
 
     private fun updateStatusView(){
+        //This updates the status bar shown at the bottom of the screen
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val textviewTitle = findViewById<TextView>(R.id.auto_clean_title)
         val textviewInfo = findViewById<TextView>(R.id.auto_clean_info)
@@ -230,6 +269,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if( index > 0 ){
+            //user enables auto-clean option
             val isRunning = isScheduleRunning()
             if( !isRunning ) {
                 //start service
@@ -255,14 +295,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Menu options for the app at top right corner
         return when( item.itemId ){
-
             R.id.menu_refresh -> { //Refresh options
                 refreshViews()
                 true
             }
             R.id.menu_settings -> { //Settings
                 val intent = Intent( this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+
+            R.id.menu_history -> {
+                val intent = Intent( this, RunHistory::class.java)
                 startActivity(intent)
                 true
             }
@@ -284,30 +330,47 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //Handle permission change event for Android < 11
         when (requestCode) {
             STORAGE_PERMISSION_CODE -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    refreshViews()
-                } else {
-                    permissionDenied()
+                if( grantResults.isNotEmpty() ) {
+                    if ( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                        refreshViews()
+                    } else {
+                        permissionDenied()
+                    }
                 }
                 return
             }
         }
     }
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if ( requestCode == STORAGE_PERMISSION_CODE ) {
+            //Handle permission change event for Android 11
+            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+                if( Environment.isExternalStorageManager()){
+                    //All good. Permission granted
+                    refreshViews()
+                }else{
+                    //user says no no.
+                    permissionDenied()
+                }
+            }
+        }
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        updateStatusView()
 
         val wListView = findViewById<ListView>(R.id.whatsapp_listview)
         val wBListView = findViewById<ListView>(R.id.whatsapp_business_listview)
         val buttonA = findViewById<Button>(R.id.clear_whatsapp_button)
         val buttonB = findViewById<Button>(R.id.clear_business_button)
 
+        //we initialize the listAdapters first before we deal with the UI
         listAdapter = ArrayAdapter(
             this.applicationContext,
             R.layout.vlist,
@@ -323,6 +386,10 @@ class MainActivity : AppCompatActivity() {
         wListView.adapter = listAdapter
         wBListView.adapter = listAdapterWB
 
+        //update bottom status bar
+        updateStatusView()
+
+        //Set the click listener on the <clear files> button for WhatsApp files
         buttonA.setOnClickListener{
             val alert = AlertDialog.Builder(this)
             val length = dataList.size
@@ -352,7 +419,6 @@ class MainActivity : AppCompatActivity() {
                         file.delete()
                     }
                 }
-
                 dataPaths.clear()
                 dataList.clear()
                 listAdapter.notifyDataSetChanged()
@@ -368,7 +434,7 @@ class MainActivity : AppCompatActivity() {
             alert.show()
         }
 
-
+        //Similarly, Set the click listener WhatsApp Business clear button
         buttonB.setOnClickListener{
             val alert = AlertDialog.Builder(this)
             val length = dataListWB.size - 1
@@ -414,21 +480,14 @@ class MainActivity : AppCompatActivity() {
             alert.show()
         }
 
-        //Check if we have read and write permission for storage
-        val permissions = arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-
-        val permissionA = checkStoragePermission(permissions[0])
-        val permissionB = checkStoragePermission(permissions[1])
-
-        if( !permissionA || !permissionB ){
-            requestPermission(permissions, STORAGE_PERMISSION_CODE )
+        //Check if we have read and write permission on storage.
+            //UI will be refreshed on permission change
+        val permitted = checkStoragePermission()
+        if( !permitted ){
+            requestPermission()
         }else{
             refreshViews()
         }
-
     }
 
 

@@ -1,0 +1,4 @@
+- Fixed permission issue on Android 11 and above. 
+- Added a page to show when auto-clean removed backup files
+- Minor changes to app UI
+- Added support for Android 12

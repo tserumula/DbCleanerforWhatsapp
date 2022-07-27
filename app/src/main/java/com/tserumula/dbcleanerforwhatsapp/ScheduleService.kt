@@ -76,10 +76,10 @@ class ScheduleService : Service() {
                 }
                 fos.close()
             } catch (fileNotFound: FileNotFoundException) {
-                Log.d("Alarm Service", "File not found exception")
+                Log.d("ScheduleService", "File not found exception")
             }
             catch (ioException: IOException) {
-                Log.d("Alarm Service", "Input output exception")
+                Log.d("ScheduleService", "Input output exception")
             }
         }
     }
@@ -89,7 +89,7 @@ class ScheduleService : Service() {
     }
 
     override fun onDestroy() {
-        Log.d("Alarm Service", "Service on destroy")
+        Log.d("ScheduleService", "Service on destroy")
 
         SleepLock.instance.getMyWakeLock()?.release()
 
@@ -98,7 +98,7 @@ class ScheduleService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        Log.d("Alarm Service", "Service running")
+        Log.d("ScheduleService", "Service running")
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val index = when( prefs.getString("auto_clean_preference", "off")){
             "off" -> 0
