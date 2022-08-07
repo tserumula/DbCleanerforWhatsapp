@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="green_tree">#55183515</color>
+    <color name="tree_green">#55183515</color>
+    <color name="fern_green">#B2D1B4</color>
+    <color name="hunter_green">#355E3B</color>
 
 </resources>

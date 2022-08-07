@@ -27,47 +27,50 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var listAdapter : ArrayAdapter<*>
+    private lateinit var listAdapter: ArrayAdapter<*>
     private var dataList = mutableListOf<String>()
     private var dataPaths = mutableListOf<String>()
 
-    private lateinit var listAdapterWB : ArrayAdapter<*>
+    private lateinit var listAdapterWB: ArrayAdapter<*>
     private var dataListWB = mutableListOf<String>()
     private var dataPathsWB = mutableListOf<String>()
 
-    private var settingAutoClean : String = "off"
+    private var settingAutoClean: String = "off"
 
-    private fun checkStoragePermission(): Boolean{
+    private var appLanguage = "en"
+
+    private fun checkStoragePermission(): Boolean {
         val permissions = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager()
-        }else{
-            val pA = ContextCompat.checkSelfPermission( applicationContext, permissions[0])
-            val pB = ContextCompat.checkSelfPermission( applicationContext, permissions[1])
-            return ( pA == PackageManager.PERMISSION_GRANTED && pB == PackageManager.PERMISSION_GRANTED )
+        } else {
+            val pA = ContextCompat.checkSelfPermission(applicationContext, permissions[0])
+            val pB = ContextCompat.checkSelfPermission(applicationContext, permissions[1])
+            return (pA == PackageManager.PERMISSION_GRANTED && pB == PackageManager.PERMISSION_GRANTED)
         }
     }
 
     private fun requestPermission() {
 
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             //Android 11, 12,..
-            try{
+            try {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                 intent.addCategory("android.intent.category.DEFAULT")
                 intent.data = Uri.parse(String.format("package:%s", applicationContext.packageName))
                 startActivityForResult(intent, STORAGE_PERMISSION_CODE)
-            }catch(e : Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 val intent = Intent()
                 intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
                 startActivityForResult(intent, STORAGE_PERMISSION_CODE)
             }
-        }else{
-            ActivityCompat.requestPermissions( this,
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun permissionDenied(){
+    private fun permissionDenied() {
         val textview = findViewById<TextView>(R.id.view_permission_denied)
         val layout = findViewById<LinearLayout>(R.id.linear_layout_a)
 
@@ -85,14 +88,14 @@ class MainActivity : AppCompatActivity() {
         textview.visibility = View.VISIBLE
     }
 
-    private fun isScheduleRunning(): Boolean{
+    private fun isScheduleRunning(): Boolean {
         val intent = Intent(this, ScheduleReceiver::class.java)
         val isRunning =
             PendingIntent.getBroadcast(
                 this,
                 ALARM_REQUEST_CODE,
                 intent,
-                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)  {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE
                 } else {
                     PendingIntent.FLAG_NO_CREATE
@@ -101,14 +104,14 @@ class MainActivity : AppCompatActivity() {
         return isRunning
     }
 
-    private fun stopSchedule(){
+    private fun stopSchedule() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, ScheduleReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             ALARM_REQUEST_CODE,
             intent,
-            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)  {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             } else {
                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -142,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             this,
             ALARM_REQUEST_CODE,
             intent,
-            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)  {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             } else {
                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -157,10 +160,14 @@ class MainActivity : AppCompatActivity() {
             pendingIntent
         )
         //alarmManager.set( AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-        Toast.makeText(this, "Auto-clean activated", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            this,
+            resources.getString(R.string.auto_clean_activated),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
-    private fun refreshViews(){
+    private fun refreshViews() {
         val textViewA = findViewById<TextView>(R.id.detected_view_a)
         val textViewB = findViewById<TextView>(R.id.detected_view_b)
 
@@ -171,24 +178,27 @@ class MainActivity : AppCompatActivity() {
         dataList.clear()
 
         val storage = this.getExternalFilesDir("/")
-        if( storage != null ){
+        if (storage != null) {
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
-            if( root != null ) {
-                val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+            if (root != null) {
+                val whatsAppFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
-                }else{
+                } else {
                     root.absolutePath + "/WhatsApp/Databases"
                 }
-                if ( File(whatsAppFolder).isDirectory) {
+                if (File(whatsAppFolder).isDirectory) {
                     textViewA.text = resources.getString(R.string.app_detected)
 
                     val files = File(whatsAppFolder).listFiles()
-                    if( files != null && files.size > 1 ) {
-                        for ( file in files ) {
-                            val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
-                            if( !file.name.contains(MAIN_DBFILE_NAME) ) {
+                    if (files != null && files.size > 1) {
+                        for (file in files) {
+                            val size = BigDecimal((file.length() / 1e6)).setScale(
+                                2,
+                                RoundingMode.HALF_EVEN
+                            ).toString()
+                            if (!file.name.contains(MAIN_DBFILE_NAME)) {
                                 //Add file paths to memory so we don't have to scan again later
-                                    // (unless during refresh)
+                                // (unless during refresh)
                                 dataPaths.add(file.path)
                                 dataList.add(file.name + "\n" + size + " MB")
                             }
@@ -198,19 +208,22 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // Repeat for Whatsapp Business folder
-                val whatsAppBusinessFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+                val whatsAppBusinessFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     root.absolutePath + "/Android/media/com.whatsapp.w4b/WhatsApp Business/Databases"
-                }else{
+                } else {
                     root.absolutePath + "/WhatsApp Business/Databases"
                 }
-                if ( File(whatsAppBusinessFolder).isDirectory) {
+                if (File(whatsAppBusinessFolder).isDirectory) {
                     textViewB.text = resources.getString(R.string.app_detected)
 
                     val filesWB = File(whatsAppBusinessFolder).listFiles()
-                    if( filesWB != null && filesWB.size > 1 ) {
-                        for ( file in filesWB ) {
-                            val size = BigDecimal(( file.length() / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString()
-                            if( !file.name.contains(MAIN_DBFILE_NAME) ) {
+                    if (filesWB != null && filesWB.size > 1) {
+                        for (file in filesWB) {
+                            val size = BigDecimal((file.length() / 1e6)).setScale(
+                                2,
+                                RoundingMode.HALF_EVEN
+                            ).toString()
+                            if (!file.name.contains(MAIN_DBFILE_NAME)) {
                                 dataPathsWB.add(file.path)
                                 dataListWB.add(file.name + "\n" + size + " MB")
                             }
@@ -221,28 +234,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if( dataList.size > 0 ){
+        if (dataList.size > 0) {
             //There are files we can clear. Show clear button on screen
             textViewClearA.visibility = View.GONE
             findViewById<Button>(R.id.clear_whatsapp_button).visibility = View.VISIBLE
 
-        }else{
+        } else {
             //Nothing to clear
             textViewClearA.visibility = View.VISIBLE
             findViewById<Button>(R.id.clear_whatsapp_button).visibility = View.INVISIBLE
         }
 
-        if( dataListWB.size > 0 ){
+        if (dataListWB.size > 0) {
             textViewClearB.visibility = View.GONE
             findViewById<Button>(R.id.clear_business_button).visibility = View.VISIBLE
-        }else{
+        } else {
             //Nothing to clear
             textViewClearB.visibility = View.VISIBLE
             findViewById<Button>(R.id.clear_business_button).visibility = View.INVISIBLE
         }
     }
 
-    private fun updateStatusView(){
+    private fun updateStatusView() {
         //This updates the status bar shown at the bottom of the screen
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val textviewTitle = findViewById<TextView>(R.id.auto_clean_title)
@@ -250,40 +263,48 @@ class MainActivity : AppCompatActivity() {
         val textviewScheduler = findViewById<TextView>(R.id.auto_clean_scheduler)
         val prefAutoClean = prefs.getString("auto_clean_preference", "off")
         val arrayEntries = resources.getStringArray(R.array.settings_auto_entries)
-        var scheduleString = "Not Running"
+        var scheduleString = resources.getString(R.string.not_running)
 
-        if( prefAutoClean != null ){
+        if (prefAutoClean != null) {
             settingAutoClean = prefAutoClean
         }
 
-        val status = when(prefAutoClean){
-            "off" -> "OFF"
-            else -> "Enabled"
+        val status = when (prefAutoClean) {
+            "off" -> resources.getString(R.string.off)
+            else -> resources.getString(R.string.enabled)
         }
 
-        val index = when( prefAutoClean ){
+        val index = when (prefAutoClean) {
             "off" -> 0
             "daily" -> 1
             "weekly" -> 2
             else -> 0
         }
 
-        if( index > 0 ){
+        if (index > 0) {
             //user enables auto-clean option
             val isRunning = isScheduleRunning()
-            if( !isRunning ) {
+            if (!isRunning) {
                 //start service
                 setSchedule()
             }
-            scheduleString = "Running"
+            scheduleString = resources.getString(R.string.running)
         }
 
-        textviewTitle.text = resources.getString(R.string.status_auto_clean, status )
+        textviewTitle.text = resources.getString(R.string.status_auto_clean, status)
         textviewInfo.text = resources.getString(R.string.status_clean_info, arrayEntries[index])
-        textviewScheduler.text = resources.getString(R.string.status_clean_schedule,scheduleString)
+        textviewScheduler.text = resources.getString(R.string.status_clean_schedule, scheduleString)
 
     }
 
+    //This is where we change the app language
+    private fun setLanguage(localeName: String) {
+        val locale = Locale(localeName)
+        val conf = resources.configuration
+        conf.locale = locale
+        resources.updateConfiguration(conf, resources.displayMetrics)
+        this.title = resources.getString(R.string.app_name)
+    }
 
     /* ____ OVERRIDE METHODS ____ */
 
@@ -296,19 +317,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //Menu options for the app at top right corner
-        return when( item.itemId ){
+        return when (item.itemId) {
             R.id.menu_refresh -> { //Refresh options
                 refreshViews()
                 true
             }
             R.id.menu_settings -> { //Settings
-                val intent = Intent( this, SettingsActivity::class.java)
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
             }
 
             R.id.menu_history -> {
-                val intent = Intent( this, RunHistory::class.java)
+                val intent = Intent(this, RunHistory::class.java)
                 startActivity(intent)
                 true
             }
@@ -333,8 +354,8 @@ class MainActivity : AppCompatActivity() {
         //Handle permission change event for Android < 11
         when (requestCode) {
             STORAGE_PERMISSION_CODE -> {
-                if( grantResults.isNotEmpty() ) {
-                    if ( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                if (grantResults.isNotEmpty()) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         refreshViews()
                     } else {
                         permissionDenied()
@@ -347,22 +368,38 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if ( requestCode == STORAGE_PERMISSION_CODE ) {
+        if (requestCode == STORAGE_PERMISSION_CODE) {
             //Handle permission change event for Android 11
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
-                if( Environment.isExternalStorageManager()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
                     //All good. Permission granted
                     refreshViews()
-                }else{
+                } else {
                     //user says no no.
                     permissionDenied()
                 }
             }
         }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val prefLanguage = prefs.getString("language_preference", "en")
+        //Set app language
+        if (prefLanguage != null) {
+            appLanguage = prefLanguage
+            val current = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                resources.configuration.locales[0].language
+            } else {
+                resources.configuration.locale.language
+            }
+            if (current != appLanguage) {
+                setLanguage(appLanguage)
+            }
+        }
+
         setContentView(R.layout.activity_main)
 
         val wListView = findViewById<ListView>(R.id.whatsapp_listview)
@@ -372,13 +409,14 @@ class MainActivity : AppCompatActivity() {
 
         //we initialize the listAdapters first before we deal with the UI
         listAdapter = ArrayAdapter(
-            this.applicationContext,
+            this, //Pass the entire object here so that the list-adapter has access to the
+            //style attributes. Do not use getApplicationContext()
             R.layout.vlist,
             dataList
         )
 
         listAdapterWB = ArrayAdapter(
-            this.applicationContext,
+            this,
             R.layout.vlist,
             dataListWB
         )
@@ -390,43 +428,47 @@ class MainActivity : AppCompatActivity() {
         updateStatusView()
 
         //Set the click listener on the <clear files> button for WhatsApp files
-        buttonA.setOnClickListener{
+        buttonA.setOnClickListener {
             val alert = AlertDialog.Builder(this)
             val length = dataList.size
-            var tempTotal : Long = 0
-            for (i in 0 until dataPaths.size){
+            var tempTotal: Long = 0
+            for (i in 0 until dataPaths.size) {
                 val file = File(dataPaths[i])
-                if( file.exists() ){
+                if (file.exists()) {
                     tempTotal += file.length()
                 }
             }
-            val totalSize = if( tempTotal/1e6 > 1024 ){
-                BigDecimal(( tempTotal / 1e9)).setScale(2, RoundingMode.HALF_EVEN).toString() + " GB"
-            }else{
-                BigDecimal(( tempTotal/ 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString() + " MB"
+            val totalSize = if (tempTotal / 1e6 > 1024) {
+                BigDecimal((tempTotal / 1e9)).setScale(2, RoundingMode.HALF_EVEN).toString() + " GB"
+            } else {
+                BigDecimal((tempTotal / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString() + " MB"
             }
 
-            val alertTitle = resources.getString(R.string.alert_clear_title )
+            val alertTitle = resources.getString(R.string.alert_clear_title)
             val alertSummary = resources.getString(R.string.alert_clear_summary, length, totalSize)
 
-            alert.setTitle( alertTitle)
-            alert.setMessage( alertSummary)
+            alert.setTitle(alertTitle)
+            alert.setMessage(alertSummary)
 
-            alert.setPositiveButton("YES") { _, _ ->
-                for (i in 0 until dataPaths.size){
+            alert.setPositiveButton(resources.getString(R.string.yes).uppercase()) { _, _ ->
+                for (i in 0 until dataPaths.size) {
                     val file = File(dataPaths[i])
-                    if( file.canWrite() ){
+                    if (file.canWrite()) {
                         file.delete()
                     }
                 }
                 dataPaths.clear()
                 dataList.clear()
                 listAdapter.notifyDataSetChanged()
-                Toast.makeText( this , "Files Cleared successfully", Toast.LENGTH_SHORT ).show()
+                Toast.makeText(
+                    this,
+                    resources.getString(R.string.files_cleared),
+                    Toast.LENGTH_SHORT
+                ).show()
                 refreshViews()
             }
 
-            alert.setNegativeButton("NO") { dialog, _ ->
+            alert.setNegativeButton(resources.getString(R.string.no).uppercase()) { dialog, _ ->
                 dialog.cancel()
             }
 
@@ -435,32 +477,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Similarly, Set the click listener WhatsApp Business clear button
-        buttonB.setOnClickListener{
+        buttonB.setOnClickListener {
             val alert = AlertDialog.Builder(this)
             val length = dataListWB.size - 1
-            var tempTotal : Long = 0
-            for (i in 1 until dataPathsWB.size){
+            var tempTotal: Long = 0
+            for (i in 1 until dataPathsWB.size) {
                 val file = File(dataPathsWB[i])
-                if( file.exists() ){
+                if (file.exists()) {
                     tempTotal += file.length()
                 }
             }
-            val totalSize = if( tempTotal/1e6 > 1024 ){
-                BigDecimal(( tempTotal / 1e9)).setScale(2, RoundingMode.HALF_EVEN).toString() + " GB"
-            }else{
-                BigDecimal(( tempTotal/ 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString() + " MB"
+            val totalSize = if (tempTotal / 1e6 > 1024) {
+                BigDecimal((tempTotal / 1e9)).setScale(2, RoundingMode.HALF_EVEN).toString() + " GB"
+            } else {
+                BigDecimal((tempTotal / 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString() + " MB"
             }
 
-            val alertTitle = resources.getString(R.string.alert_clear_title )
+            val alertTitle = resources.getString(R.string.alert_clear_title)
             val alertSummary = resources.getString(R.string.alert_clear_summary, length, totalSize)
 
-            alert.setTitle( alertTitle)
-            alert.setMessage( alertSummary)
+            alert.setTitle(alertTitle)
+            alert.setMessage(alertSummary)
 
-            alert.setPositiveButton("YES") { _, _ ->
-                for (i in 0 until dataPathsWB.size){
+            alert.setPositiveButton(resources.getString(R.string.yes).uppercase()) { _, _ ->
+                for (i in 0 until dataPathsWB.size) {
                     val file = File(dataPathsWB[i])
-                    if( file.canWrite() ){
+                    if (file.canWrite()) {
                         file.delete()
                     }
                 }
@@ -468,11 +510,14 @@ class MainActivity : AppCompatActivity() {
                 dataPathsWB.clear()
                 dataListWB.clear()
                 listAdapterWB.notifyDataSetChanged()
-                Toast.makeText( this , "Files Cleared successfully", Toast.LENGTH_SHORT ).show()
+                Toast.makeText(
+                    this,
+                    resources.getString(R.string.files_cleared), Toast.LENGTH_SHORT
+                ).show()
                 refreshViews()
             }
 
-            alert.setNegativeButton("NO") { dialog, _ ->
+            alert.setNegativeButton(resources.getString(R.string.no).uppercase()) { dialog, _ ->
                 dialog.cancel()
             }
 
@@ -481,11 +526,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Check if we have read and write permission on storage.
-            //UI will be refreshed on permission change
+        //UI will be refreshed on permission change
         val permitted = checkStoragePermission()
-        if( !permitted ){
+        if (!permitted) {
             requestPermission()
-        }else{
+        } else {
             refreshViews()
         }
     }
@@ -496,10 +541,16 @@ class MainActivity : AppCompatActivity() {
         //check if settings changed
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val setting = prefs.getString("auto_clean_preference", "off")
-        if( setting != settingAutoClean ){
+        val prefLanguage = prefs.getString("language_preference", "en")
+
+        if (prefLanguage != null && prefLanguage != appLanguage) {
+            //restart app
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
+        } else if (setting != settingAutoClean) {
             updateStatusView()
         }
     }
-
 
 }

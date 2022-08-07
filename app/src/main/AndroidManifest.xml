@@ -27,7 +27,7 @@
         </activity>
 
         <activity android:name=".SettingsActivity"
-            android:label="Settings"
+            android:label="@string/menu_settings"
             android:exported="false" />
 
         <activity android:name=".WebpageActivity"

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DbCleaner para Whatsapp</string>
+    <string name="title_whatsapp">WhatsApp</string>
+    <string name="title_whatsapp_business">WhatsApp Business</string>
+    <string name="app_undetected">Não detectado</string>
+    <string name="app_detected">Detectado</string>
+    <string name="clear_text">Limpar</string>
+    <string name="status_auto_clean">Limpeza automática : %1$s</string>
+    <string name="status_clean_info">Info : %1$s</string>
+    <string name="status_clean_schedule">Serviço programado : %1$s</string>
+    <string name="menu_refresh">Atualizar</string>
+    <string name="menu_history">Histórico de funcionamento</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="storage_denied">Permissão de armazenamento negada</string>
+    <string name="clear_nothing">Nada para limpar</string>
+    <string name="alert_clear_title">Remover arquivos?</string>
+    <string name="alert_clear_summary">Limpar %1$d arquivos de %2$s do armazenamento?
+        O arquivo principal de backup do whatsApp será preservado. </string>
+
+    <string name="pref_auto_clean">Limpeza automática</string>
+    <string name="pref_auto_clean_summary">Agende serviço para limpar automaticamente
+    os arquivos de dados</string>
+    <string name="exit">Sair</string>
+
+    <string name="language">Língua</string>
+    <string name="select_language">selecione o idioma</string>
+    <string name="feedback">retorno</string>
+    <string name="about">cerca de</string>
+    <string name="main">a Principal</string>
+    <string name="yes">sim</string>
+    <string name="no">não</string>
+    <string name="off">DESLIGADO</string>
+    <string name="enabled">permitir</string>
+    <string name="files_cleared">Arquivos apagados com sucesso</string>
+    <string name="not_running">não está funcionando</string>
+    <string name="running">corrida</string>
+    <string name="auto_clean_activated">a limpeza automática está ativada</string>
+
+    <string-array name="settings_auto_entries">
+        <item>DESLIGADO</item>
+        <item>Todos os dias as 3:00 AM</item>
+        <item>Uma vez por semana, na sexta-feira, as 3:00 AM</item>
+    </string-array>
+
+    <string-array name="settings_auto_values">
+        <item>desligado</item>
+        <item>cada dia</item>
+        <item>cada semana</item>
+    </string-array>
+
+    <string-array name="list_languages">
+        <item>English (predefinição)</item>
+        <item>Portuguese</item>
+        <item>Northern Sotho</item>
+    </string-array>
+
+    <string-array name="languages_values">
+        <item>en</item>
+        <item>pt</item>
+        <item>nso</item>
+    </string-array>
+
+</resources>

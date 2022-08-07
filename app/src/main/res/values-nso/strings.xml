@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DbCleaner ya Whatsapp</string>
+    <string name="title_whatsapp">WhatsApp</string>
+    <string name="title_whatsapp_business">WhatsApp Business</string>
+    <string name="app_undetected">Gae bonagale</string>
+    <string name="app_detected">E ya bonagala</string>
+    <string name="clear_text">Tlosa</string>
+    <string name="status_auto_clean">Go kolomaka ka boiketsetso : %1$s</string>
+    <string name="status_clean_info">Molaetša : %1$s</string>
+    <string name="status_clean_schedule">Mmereko wa nako : %1$s</string>
+    <string name="menu_refresh">Bosheletša gape</string>
+    <string name="menu_history">Histori ya pulo</string>
+    <string name="menu_settings">Dithulusi</string>
+    <string name="storage_denied">Gogona tumello ya go bona difaele</string>
+    <string name="clear_nothing">Gogona sepe sa go hloka kolomako</string>
+    <string name="alert_clear_title">O batla go tlosa difaele?</string>
+    <string name="alert_clear_summary">O nyaka go tlosa difaele tše %1$d tša %2$s mo setoregeng?
+        Faele ya whatsApp-backup e bohlokwa e ka se tloge. </string>
+
+    <string name="pref_auto_clean">Kolomako ka boiketsetso</string>
+    <string name="pref_auto_clean_summary">Laetša epo yena gore e tlose di faele tša bhekapo ka bong</string>
+    <string name="exit">Etšwa</string>
+
+    <string name="language">Polelo</string>
+    <string name="select_language">Kgetha polelo</string>
+    <string name="feedback">Melaetša</string>
+    <string name="about">Ka mong</string>
+    <string name="main">Tša bohlokwa</string>
+    <string name="yes">Ee</string>
+    <string name="no">aowa</string>
+    <string name="off">E timilwe</string>
+    <string name="enabled">E laetilwe</string>
+    <string name="files_cleared">Di faele di tloshitšwe</string>
+    <string name="not_running">Ga wa laitiwa</string>
+    <string name="running">E laitilwe</string>
+    <string name="auto_clean_activated">Go kolomaka ka boiketsetso go laitilwe</string>
+
+    <string-array name="settings_auto_entries">
+        <item>E timilwe</item>
+        <item>Letšatši le letsatši ka 3:00 AM</item>
+        <item>Ga tee ka beke ka Labohlano ka 3:00 AM</item>
+    </string-array>
+
+    <string-array name="settings_auto_values">
+        <item>E timilwe</item>
+        <item>Letšatši le letsatši</item>
+        <item>Ka beke</item>
+    </string-array>
+
+
+    <string-array name="list_languages">
+        <item>English (ya kamehla)</item>
+        <item>Portuguese</item>
+        <item>Northern Sotho</item>
+    </string-array>
+
+    <string-array name="languages_values">
+        <item>en</item>
+        <item>pt</item>
+        <item>nso</item>
+    </string-array>
+
+</resources>
