@@ -22,6 +22,20 @@
     the database files</string>
     <string name="exit">Exit</string>
 
+    <string name="language">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="feedback">Feedback</string>
+    <string name="about">About</string>
+    <string name="main">Main</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="off">OFF</string>
+    <string name="enabled">Enabled</string>
+    <string name="files_cleared">Files Cleared successfully</string>
+    <string name="not_running">Not Running</string>
+    <string name="running">Running</string>
+    <string name="auto_clean_activated">Auto-clean activated</string>
+
     <string-array name="settings_auto_entries">
         <item>OFF</item>
         <item>Everyday at 3:00 AM</item>
@@ -32,6 +46,19 @@
         <item>off</item>
         <item>daily</item>
         <item>weekly</item>
+    </string-array>
+
+
+    <string-array name="list_languages">
+        <item>English (default)</item>
+        <item>Portuguese</item>
+        <item>Northern Sotho</item>
+    </string-array>
+
+    <string-array name="languages_values">
+        <item>en</item>
+        <item>pt</item>
+        <item>nso</item>
     </string-array>
 
 </resources>

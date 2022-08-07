@@ -135,12 +135,14 @@
         android:text="@string/storage_denied"
         android:visibility="gone" />
 
+    <!-- Bottom Status Bar -->
+
     <LinearLayout
         android:id="@+id/bottom_status_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#B2D1B4"
+        android:background="?attr/status_bar_bg"
         android:orientation="vertical"
         android:padding="10dp">
 

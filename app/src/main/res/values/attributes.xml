@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <declare-styleable name="ds">
+        <attr name="status_bar_bg" format="reference|color"/>
+        <attr name="list_item_color" format="reference|color"/>
+    </declare-styleable>
+</resources>

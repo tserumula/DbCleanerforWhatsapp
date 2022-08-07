@@ -4,7 +4,7 @@
     android:paddingBottom="50dp">
 
     <PreferenceCategory
-        android:title="Main">
+        android:title="@string/main">
 
         <ListPreference
             android:defaultValue="off"
@@ -16,14 +16,22 @@
             android:summary="@string/pref_auto_clean_summary"
             android:title="@string/pref_auto_clean" />
 
+        <ListPreference
+            android:defaultValue="en"
+            android:dialogTitle="@string/select_language"
+            android:entries="@array/list_languages"
+            android:entryValues="@array/languages_values"
+            android:key="language_preference"
+            android:title="@string/language"
+            app:icon="@drawable/ic_action_web" />
+
     </PreferenceCategory>
 
-
     <PreferenceCategory
-        android:title="Feedback">
+        android:title="@string/feedback">
 
         <Preference
-            android:title="About"
+            android:title="@string/about"
             app:icon="@android:drawable/ic_menu_info_details">
             <intent
                 android:action="android.intent.action.VIEW"
