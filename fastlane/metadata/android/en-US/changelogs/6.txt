@@ -4,4 +4,4 @@
 - Made changes to app UI and fixed issues with dark-mode
 - The app now supports Android 12
 - Added translations for Portuguese by m_s_
-- Added translations for Nothern Sotho by Thabang Serumula
+- Added translations for Northern Sotho by Thabang Serumula
