@@ -23,4 +23,4 @@ The user can clear the files manually or schedule the app to automatically remov
 
 ## Translations
 
-All translations are welcome. If you want the app to be translated into your language then please send an email to the developer(s).
+All translations are welcome. If you want the app to be translated into your language then please [send an email](mailto:tjserumula@gmail.com) to the developer(s).
