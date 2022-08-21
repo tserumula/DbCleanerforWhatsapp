@@ -23,19 +23,19 @@
     os arquivos de dados</string>
     <string name="exit">Sair</string>
 
-    <string name="language">Língua</string>
-    <string name="select_language">selecione o idioma</string>
-    <string name="feedback">retorno</string>
-    <string name="about">cerca de</string>
-    <string name="main">a Principal</string>
+    <string name="language">Idioma</string>
+    <string name="select_language">selecione idioma</string>
+    <string name="feedback">Feedback</string>
+    <string name="about">Sobre</string>
+    <string name="main">Principal</string>
     <string name="yes">sim</string>
     <string name="no">não</string>
     <string name="off">DESLIGADO</string>
-    <string name="enabled">permitir</string>
+    <string name="enabled">ligado</string>
     <string name="files_cleared">Arquivos apagados com sucesso</string>
-    <string name="not_running">não está funcionando</string>
-    <string name="running">corrida</string>
-    <string name="auto_clean_activated">a limpeza automática está ativada</string>
+    <string name="not_running">não está executado</string>
+    <string name="running">executado</string>
+    <string name="auto_clean_activated">Limpeza automática ativada</string>
 
     <string-array name="settings_auto_entries">
         <item>DESLIGADO</item>
@@ -50,7 +50,7 @@
     </string-array>
 
     <string-array name="list_languages">
-        <item>English (predefinição)</item>
+        <item>English (predefinido)</item>
         <item>Portuguese</item>
         <item>Northern Sotho</item>
     </string-array>

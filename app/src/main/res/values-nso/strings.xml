@@ -12,8 +12,8 @@
     <string name="menu_refresh">Bosheletša gape</string>
     <string name="menu_history">Histori ya pulo</string>
     <string name="menu_settings">Dithulusi</string>
-    <string name="storage_denied">Gogona tumello ya go bona difaele</string>
-    <string name="clear_nothing">Gogona sepe sa go hloka kolomako</string>
+    <string name="storage_denied">Gagona tumello ya go bona difaele</string>
+    <string name="clear_nothing">Gagona sepe sa go hloka kolomako</string>
     <string name="alert_clear_title">O batla go tlosa difaele?</string>
     <string name="alert_clear_summary">O nyaka go tlosa difaele tše %1$d tša %2$s mo setoregeng?
         Faele ya whatsApp-backup e bohlokwa e ka se tloge. </string>

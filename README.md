@@ -20,3 +20,7 @@ The user can clear the files manually or schedule the app to automatically remov
 <img src="/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="auto" height="440">
 <img src="/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="auto" height="440">
 <img src="/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="auto" height="440">
+
+## Translations
+
+All translations are welcome. If you want the app to be translated into your language then please send an email to the developer(s).
