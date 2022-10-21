@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -180,8 +181,10 @@ class MainActivity : AppCompatActivity() {
         val storage = this.getExternalFilesDir("/")
         if (storage != null) {
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
+
             if (root != null) {
                 val whatsAppFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    //Android 11
                     root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
                 } else {
                     root.absolutePath + "/WhatsApp/Databases"
