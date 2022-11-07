@@ -1,0 +1,6 @@
+- Start app on boot
+- Allow auto-clean on Whatsapp Business database files
+- Select which database files the app can clear automatically
+- Fixed glitches with app refresh button
+- Various bug fixes
+

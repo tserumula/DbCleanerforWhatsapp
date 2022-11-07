@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -135,9 +134,6 @@ class MainActivity : AppCompatActivity() {
         calendar.set(Calendar.SECOND, 0)
         calendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        //calendar.timeInMillis = System.currentTimeMillis()
-        //calendar.add(Calendar.SECOND, 20)
-
         val timeInMillis = calendar.timeInMillis
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -153,20 +149,55 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, 10000, pendingIntent)
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             timeInMillis,
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
-        //alarmManager.set( AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
+
+        //alarmManager.set( AlarmManager.RTC_WAKEUP, 10000, pendingIntent)
+
         Toast.makeText(
             this,
             resources.getString(R.string.auto_clean_activated),
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    private fun detectFiles(folder : String, app : String){
+        if (File(folder).isDirectory) {
+            val files = File(folder).listFiles()
+            if (files != null && files.isNotEmpty()) {
+                for (file in files) {
+                    val size = BigDecimal((file.length() / 1e6)).setScale(
+                        2,
+                        RoundingMode.HALF_EVEN
+                    ).toString()
+                    if (!file.name.contains(MAIN_DBFILE_NAME)) {
+                        //Add file paths to memory so we don't have to scan again later
+                        // (unless during refresh)
+                        when(app){
+                            "wa" -> {
+                                dataPaths.add(file.path)
+                                dataList.add(file.name + "\n" + size + " MB")
+                            }
+                            "wb" -> {
+                                dataPathsWB.add(file.path)
+                                dataListWB.add(file.name + "\n" + size + " MB")
+                            }
+                        }
+                    }
+                }
+
+                when( app ) {
+                    "wa" -> listAdapter.notifyDataSetChanged()
+                    "wb" -> listAdapterWB.notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
 
     private fun refreshViews() {
         val textViewA = findViewById<TextView>(R.id.detected_view_a)
@@ -178,61 +209,33 @@ class MainActivity : AppCompatActivity() {
         dataPaths.clear()
         dataList.clear()
 
+        dataPathsWB.clear()
+        dataListWB.clear()
+
         val storage = this.getExternalFilesDir("/")
         if (storage != null) {
             val root = storage.parentFile?.parentFile?.parentFile?.parentFile
-
             if (root != null) {
-                val whatsAppFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    //Android 11
+                val whatsAppFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { //Android 11
                     root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
                 } else {
                     root.absolutePath + "/WhatsApp/Databases"
                 }
-                if (File(whatsAppFolder).isDirectory) {
-                    textViewA.text = resources.getString(R.string.app_detected)
 
-                    val files = File(whatsAppFolder).listFiles()
-                    if (files != null && files.size > 1) {
-                        for (file in files) {
-                            val size = BigDecimal((file.length() / 1e6)).setScale(
-                                2,
-                                RoundingMode.HALF_EVEN
-                            ).toString()
-                            if (!file.name.contains(MAIN_DBFILE_NAME)) {
-                                //Add file paths to memory so we don't have to scan again later
-                                // (unless during refresh)
-                                dataPaths.add(file.path)
-                                dataList.add(file.name + "\n" + size + " MB")
-                            }
-                        }
-                        listAdapter.notifyDataSetChanged()
-                    }
-                }
-
-                // Repeat for Whatsapp Business folder
                 val whatsAppBusinessFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     root.absolutePath + "/Android/media/com.whatsapp.w4b/WhatsApp Business/Databases"
                 } else {
                     root.absolutePath + "/WhatsApp Business/Databases"
                 }
+
+                if ( File(whatsAppFolder).isDirectory ) {
+                    textViewA.text = resources.getString(R.string.app_detected)
+                    detectFiles(whatsAppFolder, "wa")
+                }
+
                 if (File(whatsAppBusinessFolder).isDirectory) {
                     textViewB.text = resources.getString(R.string.app_detected)
-
-                    val filesWB = File(whatsAppBusinessFolder).listFiles()
-                    if (filesWB != null && filesWB.size > 1) {
-                        for (file in filesWB) {
-                            val size = BigDecimal((file.length() / 1e6)).setScale(
-                                2,
-                                RoundingMode.HALF_EVEN
-                            ).toString()
-                            if (!file.name.contains(MAIN_DBFILE_NAME)) {
-                                dataPathsWB.add(file.path)
-                                dataListWB.add(file.name + "\n" + size + " MB")
-                            }
-                        }
-                        listAdapterWB.notifyDataSetChanged()
-                    }
+                    detectFiles(whatsAppBusinessFolder, "wb")
                 }
             }
         }
@@ -390,6 +393,7 @@ class MainActivity : AppCompatActivity() {
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val prefLanguage = prefs.getString("language_preference", "en")
+
         //Set app language
         if (prefLanguage != null) {
             appLanguage = prefLanguage
@@ -460,9 +464,6 @@ class MainActivity : AppCompatActivity() {
                         file.delete()
                     }
                 }
-                dataPaths.clear()
-                dataList.clear()
-                listAdapter.notifyDataSetChanged()
                 Toast.makeText(
                     this,
                     resources.getString(R.string.files_cleared),
@@ -482,9 +483,9 @@ class MainActivity : AppCompatActivity() {
         //Similarly, Set the click listener WhatsApp Business clear button
         buttonB.setOnClickListener {
             val alert = AlertDialog.Builder(this)
-            val length = dataListWB.size - 1
+            val length = dataListWB.size
             var tempTotal: Long = 0
-            for (i in 1 until dataPathsWB.size) {
+            for (i in 0 until dataPathsWB.size) {
                 val file = File(dataPathsWB[i])
                 if (file.exists()) {
                     tempTotal += file.length()
@@ -510,9 +511,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                dataPathsWB.clear()
-                dataListWB.clear()
-                listAdapterWB.notifyDataSetChanged()
                 Toast.makeText(
                     this,
                     resources.getString(R.string.files_cleared), Toast.LENGTH_SHORT
@@ -537,7 +535,6 @@ class MainActivity : AppCompatActivity() {
             refreshViews()
         }
     }
-
 
     override fun onResume() {
         super.onResume()

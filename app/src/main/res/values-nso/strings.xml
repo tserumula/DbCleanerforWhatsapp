@@ -36,6 +36,10 @@
     <string name="running">E laitilwe</string>
     <string name="auto_clean_activated">Go kolomaka ka boiketsetso go laitilwe</string>
 
+    <string name="select_clean">difaele tša go kolomakwa ka bong</string>
+    <string name="select_clean_files">Kgetha difaele tša go thlokwa kolomako</string>
+    <string name="select_clean_summary">Kgetha difaele tša go thlokwa kolomako</string>
+
     <string-array name="settings_auto_entries">
         <item>E timilwe</item>
         <item>Letšatši le letsatši ka 3:00 AM</item>
