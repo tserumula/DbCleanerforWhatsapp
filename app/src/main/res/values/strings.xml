@@ -36,6 +36,10 @@
     <string name="running">Running</string>
     <string name="auto_clean_activated">Auto-clean activated</string>
 
+    <string name="select_clean">Auto-clean app files</string>
+    <string name="select_clean_files">Choose which app files to auto-clean</string>
+    <string name="select_clean_summary">Select which app database files to clean-up automatically</string>
+
     <string-array name="settings_auto_entries">
         <item>OFF</item>
         <item>Everyday at 3:00 AM</item>
@@ -60,5 +64,21 @@
         <item>pt</item>
         <item>nso</item>
     </string-array>
+
+    <string-array name="app_clean_entries">
+        <item>WhatsApp</item>
+        <item>WhatsApp Business</item>
+    </string-array>
+
+    <string-array name="app_clean_values">
+        <item>wa</item>
+        <item>wb</item>
+    </string-array>
+
+    <string-array name="app_clean_default">
+        <item>wa</item>
+        <item>x</item>
+    </string-array>
+
 
 </resources>

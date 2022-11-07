@@ -16,6 +16,17 @@
             android:summary="@string/pref_auto_clean_summary"
             android:title="@string/pref_auto_clean" />
 
+        <MultiSelectListPreference
+            app:defaultValue="@array/app_clean_default"
+            app:dialogTitle="@string/select_clean_files"
+            app:entries="@array/app_clean_entries"
+            app:entryValues="@array/app_clean_values"
+            app:icon="?attr/actionModeSelectAllDrawable"
+            app:key="auto_clean_apps"
+            app:summary="@string/select_clean_summary"
+            app:title="@string/select_clean" />
+
+
         <ListPreference
             android:defaultValue="en"
             android:dialogTitle="@string/select_language"

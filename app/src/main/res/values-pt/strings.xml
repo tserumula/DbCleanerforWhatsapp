@@ -37,6 +37,10 @@
     <string name="running">executado</string>
     <string name="auto_clean_activated">Limpeza automática ativada</string>
 
+    <string name="select_clean">Arquivos de aplicativos limpos automaticamente</string>
+    <string name="select_clean_files">Escolha quais arquivos de aplicativos limpar automaticamente</string>
+    <string name="select_clean_summary">Escolha quais arquivos de aplicativos limpar automaticamente</string>
+
     <string-array name="settings_auto_entries">
         <item>DESLIGADO</item>
         <item>Todos os dias as 3:00 AM</item>

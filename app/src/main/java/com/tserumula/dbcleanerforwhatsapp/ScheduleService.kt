@@ -18,38 +18,31 @@ import java.util.*
 
 class ScheduleService : Service() {
 
-    private fun clearFiles() : String {
+    private fun clearFiles(folder : String, name : String) : String {
         var totalCleared = 0L
         var totalSize = 0L
         var outputString = "Cleared 0 files"
-        val storage = this.getExternalFilesDir("/")
-        if ( storage != null) {
-            val root = storage.parentFile?.parentFile?.parentFile?.parentFile
-            if (root != null) {
-                val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
-                    root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
-                }else{
-                    root.absolutePath + "/WhatsApp/Databases"
-                }
-                if (File(whatsAppFolder).isDirectory) {
-                    val files = File(whatsAppFolder).listFiles()
-                    if ( files != null && files.size > 1) {
-                        for (file in files) {
-                            if ( !file.name.contains(MAIN_DBFILE_NAME) && file.canWrite() ) {
-                                totalSize += file.length()
-                                totalCleared += 1
-                                file.delete()
-                            }
-                        }
-                        if( totalSize > 0 ) {
-                            val size = if( totalSize/1e6 > 1024 ){
-                                BigDecimal(( totalSize / 1e9)).setScale(2, RoundingMode.HALF_EVEN).toString() + " GB"
-                            }else{
-                                BigDecimal(( totalSize/ 1e6)).setScale(2, RoundingMode.HALF_EVEN).toString() + " MB"
-                            }
-                            outputString = "Cleared $totalCleared files of $size [WhatsApp]"
-                        }
+
+        if (File(folder).isDirectory) {
+            val files = File(folder).listFiles()
+            if (files != null && files.size > 1) {
+                for (file in files) {
+                    if (!file.name.contains(MAIN_DBFILE_NAME) && file.canWrite()) {
+                        totalSize += file.length()
+                        totalCleared += 1
+                        file.delete()
                     }
+                }
+
+                if (totalSize > 0) {
+                    val size = if (totalSize / 1e6 > 1024) {
+                        BigDecimal((totalSize / 1e9)).setScale(2, RoundingMode.HALF_EVEN)
+                            .toString() + " GB"
+                    } else {
+                        BigDecimal((totalSize / 1e6)).setScale(2, RoundingMode.HALF_EVEN)
+                            .toString() + " MB"
+                    }
+                    outputString = "Cleared $totalCleared files of $size [$name]"
                 }
             }
         }
@@ -84,6 +77,37 @@ class ScheduleService : Service() {
         }
     }
 
+    private fun runAutoClean(cA : Boolean, cB : Boolean, s1 : String, s2 : String): String{
+        var tempA = ""
+        var tempB = ""
+        if( cA ) {
+            tempA = clearFiles(s1, "WhatsApp")
+        }
+
+        if( cB ) {
+            tempB = clearFiles(s2, "WhatsApp Business")
+        }
+
+        val output = if ( tempA.length > 20 && tempB.length < 20){
+            //cleared WA but not WB
+            tempA
+        }else if( tempB.length > 20 && tempA.length < 20 ){
+            //cleared WB but not WA
+            tempB
+        }else if (tempA.length > 20 && tempB.length > 20 ){
+            //cleared both
+            "$tempA; $tempB"
+        }else if( tempA.length > 10){
+            //cleared none
+            tempA
+        }else{
+            //cleared none
+            tempB
+        }
+
+        return output
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -100,27 +124,64 @@ class ScheduleService : Service() {
 
         Log.d("ScheduleService", "Service running")
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val selectedApps = prefs.getStringSet("auto_clean_apps", HashSet<String>())
+        var clearWA = false
+        var clearWB = false
         val index = when( prefs.getString("auto_clean_preference", "off")){
             "off" -> 0
             "daily" -> 1
             "weekly" -> 2
             else -> 0
         }
-        if( index > 0 ){
-            var log  = ""
-            if( index == 2 ){
-                //check if friday then run auto clean
-                if( Calendar.DAY_OF_WEEK == Calendar.FRIDAY ) {
-                    log = clearFiles()
-                }
-            }else{
-                // run auto clean
-                log = clearFiles()
+
+        if (selectedApps != null){
+            if (selectedApps.contains("wa")){
+                clearWA = true
             }
-            //Toast.makeText(this, "Service.onStart()", Toast.LENGTH_LONG).show()
-            logEvent( log )
+
+            if( selectedApps.contains("wb")){
+                clearWB = true
+            }
         }
 
+
+        if( index > 0 ) {
+            var log = ""
+            val storage = this.getExternalFilesDir("/")
+            if (storage != null) {
+                val root = storage.parentFile?.parentFile?.parentFile?.parentFile
+                if (root != null) {
+                    val whatsAppFolder = if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)  {
+                        root.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Databases"
+                    }else{
+                        root.absolutePath + "/WhatsApp/Databases"
+                    }
+
+                    val whatsAppBusinessFolder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        root.absolutePath + "/Android/media/com.whatsapp.w4b/WhatsApp Business/Databases"
+                    } else {
+                        root.absolutePath + "/WhatsApp Business/Databases"
+                    }
+
+                    if (index == 2) {
+                        //Check if Frida then run auto-clean
+                        if( Calendar.DAY_OF_WEEK == Calendar.FRIDAY ) {
+                            log = runAutoClean(
+                                clearWA,
+                                clearWB,
+                                whatsAppFolder,
+                                whatsAppBusinessFolder
+                            )
+                        }
+                    } else {
+                        // run auto clean
+                        log = runAutoClean(clearWA, clearWB, whatsAppFolder,whatsAppBusinessFolder)
+                    }
+                    //Toast.makeText(this, "Service.onStart()", Toast.LENGTH_LONG).show()
+                    logEvent(log)
+                }
+            }
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
